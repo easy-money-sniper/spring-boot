@@ -1,0 +1,59 @@
+server:
+  port: ${server.port}
+
+my:
+  real-name: Liang Xu
+  age: 23
+  height: 172
+
+spring:
+  # banner shown in running log
+  main:
+    banner-mode: log
+  banner:
+    location: banner.txt
+    charset: UTF-8
+
+  # multi datasource
+  datasource:
+    druid:
+      master:
+        url: jdbc:mysql://127.0.0.1:3306/spring_boot?useUnicode=true&characterEncoding=utf8
+        username: root
+        password: Durant@9576
+        driverClassName: com.mysql.jdbc.Driver
+
+        initialSize: 1
+        minIdle: 1
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        keepAlive: true
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+        asyncInit: true
+        filters: stat
+      slave:
+        url: jdbc:mysql://127.0.0.1:3306/spring_boot?useUnicode=true&characterEncoding=utf8
+        username: root
+        password: Durant@9576
+        driverClassName: com.mysql.jdbc.Driver
+
+        initialSize: 1
+        minIdle: 1
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        keepAlive: true
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+        asyncInit: true
+        filters: stat
