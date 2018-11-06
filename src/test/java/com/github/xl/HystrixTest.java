@@ -21,14 +21,33 @@ public class HystrixTest {
 
     @Test
     public void testCircuitBreaker() throws InterruptedException {
-        for (int i = 0; i < 120; i++) {
-            TimeUnit.MILLISECONDS.sleep(500);
-            HystrixCommand<String> hystrixCommand = new HystrixHandler();
-            String res = hystrixCommand.execute();
-            LOGGER.info("call times: " + (i + 1)
-                    + ", result: " + res
-                    + ", isOpen: " + hystrixCommand.isCircuitBreakerOpen()
-                    + ", percent: " + hystrixCommand.getMetrics().getHealthCounts().getErrorPercentage());
+        new Thread(new Worker("Kevin")).start();
+        new Thread(new Worker("Liang")).start();
+        Thread.sleep(90 * 1000);
+    }
+
+    class Worker implements Runnable {
+        private final String commandKey;
+
+        Worker(String commandKey) {
+            this.commandKey = commandKey;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 120; i++) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    LOGGER.error("sleep interrupted...");
+                }
+                HystrixCommand<String> hystrixCommand = new HystrixHandler("Thunder", commandKey);
+                String res = hystrixCommand.execute();
+                LOGGER.info(hystrixCommand.getCommandKey().name() + " call times: " + (i + 1)
+                        + ", result: " + res
+                        + ", isOpen: " + hystrixCommand.isCircuitBreakerOpen()
+                        + ", percent: " + hystrixCommand.getMetrics().getHealthCounts().getErrorPercentage());
+            }
         }
     }
 }

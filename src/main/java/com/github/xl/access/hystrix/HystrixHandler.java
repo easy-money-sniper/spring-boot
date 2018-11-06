@@ -11,20 +11,16 @@ import java.util.Random;
  */
 public class HystrixHandler extends HystrixCommand<String> {
 
-    /**
-     * requestVolumeThreshold 默认20
-     */
-
-    public HystrixHandler() {
-        super(setter());
+    public HystrixHandler(final String groupKey, final String commandKey) {
+        super(setter(groupKey, commandKey));
     }
 
-    private static Setter setter() {
+    private static Setter setter(final String groupKey, final String commandKey) {
         return HystrixCommand.Setter
                 // group key
-                .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Thunder"))
+                .withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey))
                 // command key
-                .andCommandKey(HystrixCommandKey.Factory.asKey("KevinDurant"))
+                .andCommandKey(HystrixCommandKey.Factory.asKey(commandKey))
                 // command props
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                         // execution
