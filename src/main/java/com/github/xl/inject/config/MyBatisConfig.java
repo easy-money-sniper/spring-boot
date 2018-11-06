@@ -1,7 +1,6 @@
 package com.github.xl.inject.config;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
-import com.github.xl.inject.DBRole;
 import com.github.xl.inject.DynamicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Liang Xu E-Mail: xuliang5@xiaomi.com Date: 2018/11/01 14:57
@@ -34,14 +31,7 @@ public class MyBatisConfig {
     public DynamicDataSource dynamicDataSource(
             @Autowired @Qualifier("masterDataSource") DataSource masterDataSource,
             @Autowired @Qualifier("slaveDataSource") DataSource slaveDataSource) {
-        DynamicDataSource dynamicDataSource = new DynamicDataSource();
-        Map<Object, Object> dataSourceMap = new HashMap<Object, Object>() {{
-            put(DBRole.MASTER.name(), masterDataSource);
-            put(DBRole.SLAVE.name(), slaveDataSource);
-        }};
-        dynamicDataSource.setTargetDataSources(dataSourceMap);
-        dynamicDataSource.setDefaultTargetDataSource(masterDataSource);
-        return dynamicDataSource;
+        return new DynamicDataSource(masterDataSource, slaveDataSource);
     }
 
     /**
