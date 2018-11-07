@@ -10,6 +10,11 @@ import java.util.Random;
  * refer to: https://github.com/Netflix/Hystrix/wiki/How-it-Works
  */
 public class HystrixHandler extends HystrixCommand<String> {
+    // enable request cache
+    @Override
+    protected String getCacheKey() {
+        return commandKey.name();
+    }
 
     public HystrixHandler(final String groupKey, final String commandKey) {
         super(setter(groupKey, commandKey));
@@ -24,30 +29,30 @@ public class HystrixHandler extends HystrixCommand<String> {
                 // command props
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                         // execution
-                        .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD)
-                        .withExecutionTimeoutInMilliseconds(1000)
+                        .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD) // 隔离策略
+                        .withExecutionTimeoutInMilliseconds(1000) // 执行超时（只有调用get才生效）
                         .withExecutionTimeoutEnabled(true)
-                        .withExecutionIsolationThreadInterruptOnTimeout(true)
+                        .withExecutionIsolationThreadInterruptOnTimeout(true) // 超时是否中断线程
                         .withExecutionIsolationThreadInterruptOnFutureCancel(false)
                         // fallback
                         .withFallbackEnabled(true)
                         // circuit breaker
                         .withCircuitBreakerEnabled(true)
-                        .withCircuitBreakerRequestVolumeThreshold(20)
-                        .withCircuitBreakerSleepWindowInMilliseconds(5000)
-                        .withCircuitBreakerErrorThresholdPercentage(50)
+                        .withCircuitBreakerRequestVolumeThreshold(20) // 达到时间窗口内的最小请求数量
+                        .withCircuitBreakerSleepWindowInMilliseconds(5000) // 熔断开启到尝试半开的时间
+                        .withCircuitBreakerErrorThresholdPercentage(50) // 错误百分比（及最小请求量同时达到），才触发熔断机制
                         .withCircuitBreakerForceOpen(false)
                         .withCircuitBreakerForceClosed(false)
                         // metrics
-                        .withMetricsRollingStatisticalWindowInMilliseconds(10000)
-                        .withMetricsRollingStatisticalWindowBuckets(10)
+                        .withMetricsRollingStatisticalWindowInMilliseconds(10000) // 时间窗口
+                        .withMetricsRollingStatisticalWindowBuckets(10) // 时间窗口拆分的bucket（默认每秒一个bucket）
                         .withMetricsRollingPercentileEnabled(true)
                         .withMetricsRollingPercentileWindowInMilliseconds(60000)
                         .withMetricsRollingPercentileWindowBuckets(6)
                         .withMetricsRollingPercentileBucketSize(100)
                         .withMetricsHealthSnapshotIntervalInMilliseconds(500)
                         // request cache
-                        .withRequestCacheEnabled(true)
+                        .withRequestCacheEnabled(true) // 缓存
                         .withRequestLogEnabled(true))
                 // thread pool
                 .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()

@@ -2,6 +2,7 @@ package com.github.xl;
 
 import com.github.xl.access.hystrix.HystrixHandler;
 import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -24,6 +25,22 @@ public class HystrixTest {
         new Thread(new Worker("Kevin")).start();
         new Thread(new Worker("Liang")).start();
         Thread.sleep(90 * 1000);
+    }
+
+    @Test
+    public void testRequestCache() {
+        // need to initialize context if want to use request cache/log/collapsing
+        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        try {
+            HystrixCommand<String> commandA = new HystrixHandler("Thunder", "a");
+            HystrixCommand<String> commandB = new HystrixHandler("Thunder", "a");
+            LOGGER.info(commandA.execute());
+            LOGGER.info(commandB.execute());
+            LOGGER.info(commandA.isResponseFromCache() + ":" + commandB.isResponseFromCache());
+        } finally {
+            context.shutdown();
+        }
+
     }
 
     class Worker implements Runnable {
