@@ -1,6 +1,7 @@
 package com.github.xl.access.dao;
 
 import com.github.xl.access.UserDao;
+import com.github.xl.access.mapper.UserMapper;
 import com.github.xl.access.model.UserDO;
 import com.github.xl.inject.config.annotation.UseMaster;
 import com.github.xl.inject.config.annotation.UseSlave;
@@ -31,13 +32,20 @@ import java.util.Map;
 //    }
 //}
 @Component
-public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao {
+public class UserDaoImpl /*extends SqlSessionDaoSupport*/ implements UserDao {
+
+    private final UserMapper userMapper;
 
     @Autowired
-    @Override
-    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-        super.setSqlSessionFactory(sqlSessionFactory);
+    public UserDaoImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
+
+//    @Autowired
+//    @Override
+//    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+//        super.setSqlSessionFactory(sqlSessionFactory);
+//    }
 
     @UseSlave
     @Override
@@ -45,6 +53,13 @@ public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao {
         Map<String, Object> params = new HashMap<String, Object>(1) {{
             put("id", id);
         }};
-        return getSqlSession().selectOne("UserMapper.getUserById", params);
+        return userMapper.getUserById(id);
+//        return getSqlSession().selectOne("UserMapper.getUserById", params);
+    }
+
+    @Override
+    public void addUser(int age) {
+//        getSqlSession().insert("UserMapper.addUser", age);
+        userMapper.addUser(age);
     }
 }

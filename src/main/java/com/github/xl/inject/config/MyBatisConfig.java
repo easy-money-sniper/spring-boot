@@ -3,6 +3,7 @@ package com.github.xl.inject.config;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.github.xl.inject.DynamicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,7 +23,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 //MapperScan + interface Mapper + namespace define Mapper interface
-//@MapperScan(basePackages = "com.github.xl.access.mapper")
+@MapperScan(basePackages = "com.github.xl.access.mapper")
 public class MyBatisConfig {
     /**
      * 配置主从库
@@ -68,8 +69,11 @@ public class MyBatisConfig {
     /**
      * 配置事务管理
      */
-    @Bean
+    @Bean("globalTxManager")
     public PlatformTransactionManager platformTransactionManager(DynamicDataSource dataSource) {
+//        PlatformTransactionManager manager = new DataSourceTransactionManager(dataSource);
+//        ((DataSourceTransactionManager) manager).setNestedTransactionAllowed(true);
+//        return manager;
         return new DataSourceTransactionManager(dataSource);
     }
 

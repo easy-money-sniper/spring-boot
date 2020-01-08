@@ -8,4 +8,6 @@ import com.github.xl.access.model.UserDO;
 public interface UserDao {
 
     UserDO getUserById(Long id);
+
+    void addUser(int age);
 }

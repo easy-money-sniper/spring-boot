@@ -1,4 +1,6 @@
 server:
+  servlet:
+    context-path: /kd
   port: ${server.port}
 
 my:
@@ -57,3 +59,18 @@ spring:
         maxOpenPreparedStatements: 20
         asyncInit: true
         filters: stat
+  quartz:
+    auto-startup: true
+    job-store-type: jdbc
+    properties:
+      org.quartz.threadPool.threadCount: 3
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      org.quartz.jobStore.tablePrefix: QRTZ_
+      org.quartz.jobStore.misfireThreshold: 60000
+      org.quartz.jobStore.isClustered: true
+      org.quartz.jobStore.clusterCheckinInterval: 5000
+      org.quartz.jobSotre.maxMisfiresToHandleAtATime: 1
+    scheduler-name: KevinDurant
+

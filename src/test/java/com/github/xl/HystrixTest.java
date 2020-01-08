@@ -87,18 +87,26 @@ public class HystrixTest {
 
         @Override
         public void run() {
-            for (int i = 0; i < 120; i++) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(500);
-                } catch (InterruptedException e) {
-                    LOGGER.error("sleep interrupted...");
+            HystrixRequestContext context = null;
+            try {
+                context = HystrixRequestContext.initializeContext();
+                for (int i = 0; i < 120; i++) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(500);
+                    } catch (InterruptedException e) {
+                        LOGGER.error("sleep interrupted...");
+                    }
+                    HystrixCommand<String> hystrixCommand = new HystrixHandler("Thunder", commandKey);
+                    String res = hystrixCommand.execute();
+                    LOGGER.info(hystrixCommand.getCommandKey().name() + " call times: " + (i + 1)
+                            + ", result: " + res
+//                            + ", isOpen: " + hystrixCommand.isCircuitBreakerOpen()
+                            + ", percent: " + hystrixCommand.getMetrics().getHealthCounts().getErrorPercentage());
                 }
-                HystrixCommand<String> hystrixCommand = new HystrixHandler("Thunder", commandKey);
-                String res = hystrixCommand.execute();
-                LOGGER.info(hystrixCommand.getCommandKey().name() + " call times: " + (i + 1)
-                        + ", result: " + res
-                        + ", isOpen: " + hystrixCommand.isCircuitBreakerOpen()
-                        + ", percent: " + hystrixCommand.getMetrics().getHealthCounts().getErrorPercentage());
+            } finally {
+                if (context != null) {
+                    context.shutdown();
+                }
             }
         }
     }

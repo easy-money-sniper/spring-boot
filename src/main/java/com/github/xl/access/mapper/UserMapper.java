@@ -1,5 +1,7 @@
 package com.github.xl.access.mapper;
 
+import com.github.xl.access.model.UserDO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -8,5 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserMapper {
-    long countUser();
+    UserDO getUserById(@Param("id") long id);
+
+    void addUser(@Param("age") int age);
 }
